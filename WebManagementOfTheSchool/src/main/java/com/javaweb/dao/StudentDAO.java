@@ -259,84 +259,52 @@ public class StudentDAO {
 		DB.exec(sql, params);
 	}
 
-	// tim kiem sinh vien theo ten
+	// tim kiem sinh vien theo ten + phan trang
 	public static List<HashMap<String, String>> getStudentsByNameAndClass(int currentPage, int pageSize, String orderBy,
 			String studentName, String classID, String searchByType) throws SQLException, ClassNotFoundException {
 		List<HashMap<String, String>> list = new ArrayList();
 
-		String baseSQL = "SELECT * FROM `student`" + " WHERE `name` LIKE '%" + studentName + "%'";
+		String sql = "", orderByQuery = "";
 
-		String sql, orderByQuery = "";
-
-		if (orderBy != null) {
+		if (studentName == null) {
 			if (orderBy.equalsIgnoreCase("name-asc")) {
 				orderByQuery = "ORDER BY `name` ASC";
 			} else {
 				orderByQuery = "ORDER BY `name` DESC";
 			}
-		}
 
-		if (searchByType.equalsIgnoreCase("student-list-by-class")) {
-			if (currentPage == 0 && pageSize == 0 && orderBy == null) {
-				sql = baseSQL + " AND `class_id` = '" + classID + "'";
+			if (classID == null) {
+				sql = "SELECT * FROM `student` " + orderByQuery + " LIMIT " + ((currentPage - 1) * pageSize) + ","
+						+ pageSize + "";
 			} else {
-				sql = baseSQL + " AND `class_id` = '" + classID + "' " + orderByQuery + " LIMIT "
-						+ ((currentPage - 1) * pageSize) + "," + pageSize;
+				sql = "SELECT * FROM `student` WHERE `class_id` = '" + classID + "' " + orderByQuery + " LIMIT "
+						+ ((currentPage - 1) * pageSize) + "," + pageSize + "";
 			}
-		} else { // searchByType.equalsIgnoreCase("find-all-students")
-			if (currentPage == 0 && pageSize == 0 && orderBy == null && classID == null) {
-				sql = baseSQL;
-			} else {
-				sql = baseSQL + orderByQuery + " LIMIT " + ((currentPage - 1) * pageSize) + "," + pageSize;
+		} else {
+			String baseSQL = "SELECT * FROM `student`" + " WHERE `name` LIKE '%" + studentName + "%'";
+
+			if (orderBy != null) {
+				if (orderBy.equalsIgnoreCase("name-asc")) {
+					orderByQuery = "ORDER BY `name` ASC";
+				} else {
+					orderByQuery = "ORDER BY `name` DESC";
+				}
 			}
-		}
 
-		// mở kết nối DB
-		DB.open();
-
-		// lấy ra tất cả bản ghi
-		ResultSet rs = DB.q(sql);
-
-		while (rs.next()) {
-			HashMap<String, String> getRow = new HashMap<>();
-
-			getRow.put("studentID", rs.getNString("student_id"));
-			getRow.put("studentName", rs.getNString("name"));
-			getRow.put("cardID", rs.getNString("card_id"));
-			getRow.put("gender", String.valueOf(rs.getInt("gender")));
-			getRow.put("phoneNumber", rs.getNString("phone_number"));
-			getRow.put("classID", rs.getNString("class_id"));
-			getRow.put("status", String.valueOf(rs.getInt("status")));
-
-			list.add(getRow);
-		}
-
-		DB.close();
-
-		return list;
-	}
-
-	// phan trang
-	public static List<HashMap<String, String>> getStudentListByPage(int currentPage, int pageSize, String classID,
-			String orderBy) throws SQLException, ClassNotFoundException {
-		List<HashMap<String, String>> list = new ArrayList();
-
-		String orderByQuery;
-
-		if (orderBy.equalsIgnoreCase("name-asc")) {
-			orderByQuery = "ORDER BY `name` ASC";
-		} else {
-			orderByQuery = "ORDER BY `name` DESC";
-		}
-
-		String sql;
-
-		if (classID == null || classID == "" || classID.length() == 0) {
-			sql = "SELECT * FROM `student` " + orderByQuery + " LIMIT " + ((currentPage - 1) * pageSize) + ","
-					+ pageSize + "";
-		} else {
-			sql = "SELECT * FROM `student` WHERE `class_id` = '" + classID + "' " + orderByQuery + " LIMIT "
-					+ ((currentPage - 1) * pageSize) + "," + pageSize + "";
+			if (searchByType.equalsIgnoreCase("student-list-by-class")) {
+				if (currentPage == 0 && pageSize == 0 && orderBy == null) {
+					sql = baseSQL + " AND `class_id` = '" + classID + "'";
+				} else {
+					sql = baseSQL + " AND `class_id` = '" + classID + "' " + orderByQuery + " LIMIT "
+							+ ((currentPage - 1) * pageSize) + "," + pageSize;
+				}
+			} else if (searchByType.equalsIgnoreCase("find-all-students")) {
+				if (currentPage == 0 && pageSize == 0 && orderBy == null && classID == null) {
+					sql = baseSQL;
+				} else {
+					sql = baseSQL + orderByQuery + " LIMIT " + ((currentPage - 1) * pageSize) + "," + pageSize;
+				}
+			}
 		}
 
 		// mở kết nối DB

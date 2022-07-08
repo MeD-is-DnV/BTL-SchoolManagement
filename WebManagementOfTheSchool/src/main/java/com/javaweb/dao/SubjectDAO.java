@@ -115,65 +115,38 @@ public class SubjectDAO {
 			String subjectName) throws SQLException, ClassNotFoundException {
 		List<HashMap<String, String>> list = new ArrayList();
 
-		String sql;
+		String sql, orderByQuery;
 
-		String baseSQL = "SELECT \n" + "`subject_id`, \n" + "`name`,\n" + "`status`,\n"
-				+ "IF(status=1, 'Đang tồn tại', 'Đã hủy') AS `getStatus`\n" + "FROM `subject` "
-				+ " WHERE `name` LIKE '%" + subjectName + "%'";
-
-		// neu chi truyen vao subjectName thi lay toan bo danh sach tim duoc theo ten
-		// mon
-		if (currentPage == 0 && pageSize == 0 && orderBy == null) {
-			sql = baseSQL;
-		} else {
-			String orderByQuery;
-
+		// neu subjectName null thi lay danh sach mon hoc theo tung phan trang
+		if (subjectName == null) {
 			if (orderBy.equalsIgnoreCase("name-asc")) {
 				orderByQuery = "ORDER BY `name` ASC";
 			} else {
 				orderByQuery = "ORDER BY `name` DESC";
 			}
 
-			sql = baseSQL + orderByQuery + " LIMIT " + ((currentPage - 1) * pageSize) + "," + pageSize;
+			sql = "SELECT \n" + "`subject_id`, \n" + "`name`,\n" + "`status`,\n"
+					+ "IF(status=1, 'Đang tồn tại', 'Đã hủy') AS `getStatus`\n" + "FROM `subject` " + orderByQuery
+					+ " LIMIT " + ((currentPage - 1) * pageSize) + "," + pageSize + "";
+		} else { // nguoc lai, lay danh sach mon hoc theo subjectName cho tung phan trang
+			String baseSQL = "SELECT \n" + "`subject_id`, \n" + "`name`,\n" + "`status`,\n"
+					+ "IF(status=1, 'Đang tồn tại', 'Đã hủy') AS `getStatus`\n" + "FROM `subject` "
+					+ " WHERE `name` LIKE '%" + subjectName + "%'";
+
+			// neu chi truyen vao subjectName thi lay toan bo danh sach tim duoc theo ten
+			// mon
+			if (currentPage == 0 && pageSize == 0 && orderBy == null) {
+				sql = baseSQL;
+			} else {
+				if (orderBy.equalsIgnoreCase("name-asc")) {
+					orderByQuery = "ORDER BY `name` ASC";
+				} else {
+					orderByQuery = "ORDER BY `name` DESC";
+				}
+
+				sql = baseSQL + orderByQuery + " LIMIT " + ((currentPage - 1) * pageSize) + "," + pageSize;
+			}
 		}
-
-		// mở kết nối DB
-		DB.open();
-
-		// lấy ra tất cả bản ghi
-		ResultSet rs = DB.q(sql);
-
-		while (rs.next()) {
-			HashMap<String, String> getRow = new HashMap<>();
-
-			getRow.put("subjectID", rs.getNString("subject_id"));
-			getRow.put("subjectName", rs.getNString("name"));
-			getRow.put("status", rs.getNString("getStatus"));
-
-			list.add(getRow);
-		}
-
-		DB.close();
-
-		return list;
-	}
-
-	// phan trang
-	public static List<HashMap<String, String>> getSubjectListByPage(int currentPage, int pageSize, String orderBy)
-			throws SQLException, ClassNotFoundException {
-		List<HashMap<String, String>> list = new ArrayList();
-
-		String orderByQuery;
-
-		if (orderBy.equalsIgnoreCase("name-asc")) {
-			orderByQuery = "ORDER BY `name` ASC";
-		} else {
-			orderByQuery = "ORDER BY `name` DESC";
-		}
-
-		String sql = "SELECT \n" + "`subject_id`, \n" + "`name`,\n" + "`status`,\n"
-				+ "IF(status=1, 'Đang tồn tại', 'Đã hủy') AS `getStatus`\n" + "FROM `subject` " + orderByQuery
-				+ " LIMIT " + ((currentPage - 1) * pageSize) + "," + pageSize + "";
 
 		// mở kết nối DB
 		DB.open();

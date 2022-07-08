@@ -260,52 +260,41 @@ public class ClassDAO {
 		return list;
 	}
 
-	// tim kiem lop hoc
-	public static List<HashMap<String, String>> getClassListByName(String className)
-			throws SQLException, ClassNotFoundException {
+	// tim kiem lop hoc + phan trang
+	public static List<HashMap<String, String>> getClassListByNameAndPage(int currentPage, int pageSize, String orderBy,
+			String className) throws SQLException, ClassNotFoundException {
 		List<HashMap<String, String>> list = new ArrayList();
 
-		String sql = "SELECT \n" + "`class_id`, \n" + "`name`,\n" + "`status`,\n"
-				+ "IF(status=1, 'Đang hoạt động', 'Đã ngưng hoạt động') AS `getStatus`\n" + "FROM `class`"
-				+ " WHERE `name` LIKE '%" + className + "%'";
+		String sql, orderByQuery;
+		
+		// neu className null thi lay danh sach lop hoc theo tung phan trang
+		if (className == null) {
+			if (orderBy.equalsIgnoreCase("name-asc")) {
+				orderByQuery = "ORDER BY `name` ASC";
+			} else {
+				orderByQuery = "ORDER BY `name` DESC";
+			}
 
-		// mở kết nối DB
-		DB.open();
+			sql = "SELECT \n" + "`class_id`, \n" + "`name`,\n" + "`status`,\n"
+					+ "IF(status=1, 'Đang hoạt động', 'Đã ngưng hoạt động') AS `getStatus`\n" + "FROM `class` "
+					+ orderByQuery + " LIMIT " + ((currentPage - 1) * pageSize) + "," + pageSize + "";
+		} else { // nguoc lai, lay danh sach lop hoc theo className cho tung phan trang
+			String baseSQL = "SELECT \n" + "`class_id`, \n" + "`name`,\n" + "`status`,\n"
+					+ "IF(status=1, 'Đang hoạt động', 'Đã ngưng hoạt động') AS `getStatus`\n" + "FROM `class`"
+					+ " WHERE `name` LIKE '%" + className + "%'";
 
-		// lấy ra tất cả bản ghi
-		ResultSet rs = DB.q(sql);
+			if (currentPage == 0 && pageSize == 0 && orderBy == null) {
+				sql = baseSQL;
+			} else {
+				if (orderBy.equalsIgnoreCase("name-asc")) {
+					orderByQuery = " ORDER BY `name` ASC";
+				} else {
+					orderByQuery = " ORDER BY `name` DESC";
+				}
 
-		while (rs.next()) {
-			HashMap<String, String> getRow = new HashMap<>();
-
-			getRow.put("classID", rs.getNString("class_id"));
-			getRow.put("className", rs.getNString("name"));
-			getRow.put("status", rs.getNString("getStatus"));
-
-			list.add(getRow);
+				sql = baseSQL + orderByQuery + " LIMIT " + ((currentPage - 1) * pageSize) + "," + pageSize;
+			}
 		}
-
-		DB.close();
-
-		return list;
-	}
-
-	// phan trang
-	public static List<HashMap<String, String>> getClassListByPage(int currentPage, int pageSize, String orderBy)
-			throws SQLException, ClassNotFoundException {
-		List<HashMap<String, String>> list = new ArrayList();
-
-		String orderByQuery;
-
-		if (orderBy.equalsIgnoreCase("name-asc")) {
-			orderByQuery = "ORDER BY `name` ASC";
-		} else {
-			orderByQuery = "ORDER BY `name` DESC";
-		}
-
-		String sql = "SELECT \n" + "`class_id`, \n" + "`name`,\n" + "`status`,\n"
-				+ "IF(status=1, 'Đang hoạt động', 'Đã ngưng hoạt động') AS `getStatus`\n" + "FROM `class` "
-				+ orderByQuery + " LIMIT " + ((currentPage - 1) * pageSize) + "," + pageSize + "";
 
 		// mở kết nối DB
 		DB.open();

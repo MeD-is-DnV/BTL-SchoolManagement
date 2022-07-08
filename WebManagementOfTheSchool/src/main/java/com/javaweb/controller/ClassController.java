@@ -18,10 +18,11 @@ import com.javaweb.dao.Common;
 import com.javaweb.dao.SubjectDAO;
 
 @WebServlet(name = "ClassController", urlPatterns = { "/class-list", "/new-class", "/create-new-class", "/edit-class",
-		"/update-class", "/class-details", "/find-classes" })
+		"/update-class", "/class-details" })
 public class ClassController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static String action, getClassID;
+	private static String action, getClassID, orderBy;
+	private static int pageSize, currentPage, pageTotal, count;
 
 	public ClassController() {
 		super();
@@ -34,59 +35,56 @@ public class ClassController extends HttpServlet {
 		switch (action) {
 		case "/class-list":
 			try {
-				// lay tieu chi sap xep
-				String getSortParam = request.getParameter("sort-param");
-				
-				// mac dinh load danh sach tang dan theo ten (A-Z)
-				String orderBy = "name-asc";
-				
-				// du lieu mac dinh cho sort-param o url
-				String sortParam = "name-desc";
-				
-				// du lieu cho phan trang
-				String currentSort = getSortParam;
+				String keyword = request.getParameter("keyword");
 
-				if (currentSort == null) {
-					currentSort = "name-asc";
-				} else {
-					if (getSortParam.equalsIgnoreCase("name-asc")) {
-						orderBy = "name-asc";
-					} else {
-						orderBy = "name-desc";
+				// sap xep theo ten lop hoc
+				sortByStudentName(request, response);
+
+				if (keyword == null) {
+					// tinh tong so lop hoc hien co
+					int numberOfClasses = ClassDAO.getAll().size();
+
+					// tinh tong so trang
+					pageTotal = (numberOfClasses % pageSize == 0) ? (numberOfClasses / pageSize)
+							: ((numberOfClasses / pageSize) + 1);
+
+					// custom thong tin lop hoc de tra ra view
+					List<HashMap<String, String>> classList = ClassDAO.getClassListByNameAndPage(currentPage, pageSize,
+							orderBy, null);
+					count = classList.size();
+					for (int i = 0; i < count; i++) {
+						classList.get(i).put("numberOfStudents",
+								String.valueOf(ClassDAO.getNumberOfStudents(classList.get(i).get("classID"))));
 					}
-					
-					sortParam = getSortParam.equalsIgnoreCase("name-asc") ? "name-desc" : "name-asc";
+
+					request.setAttribute("classList", classList);
+					request.setAttribute("numberOfClasses", numberOfClasses);
+				} else {
+					// danh sach toan bo lop hoc tim duoc
+					List<HashMap<String, String>> classListByName = ClassDAO.getClassListByNameAndPage(0, 0, null, keyword);
+
+					// tong so luong lop hoc tim duoc
+					int numberOfThreadsFound = classListByName.size();
+
+					// danh sach lop hoc theo ten cua tung phan trang
+					List<HashMap<String, String>> classListByNameAndPage = ClassDAO.getClassListByNameAndPage(currentPage,
+							pageSize, orderBy, keyword);
+
+					count = classListByNameAndPage.size();
+					for (int i = 0; i < count; i++) {
+						classListByNameAndPage.get(i).put("numberOfStudents", String
+								.valueOf(ClassDAO.getNumberOfStudents(classListByNameAndPage.get(i).get("classID"))));
+					}
+
+					pageTotal = (numberOfThreadsFound % pageSize == 0) ? (numberOfThreadsFound / pageSize)
+							: ((numberOfThreadsFound / pageSize) + 1);
+
+					request.setAttribute("keyword", keyword);
+					request.setAttribute("classListByNameAndPage", classListByNameAndPage);
+					request.setAttribute("numberOfThreadsFound", numberOfThreadsFound);
 				}
 
-				request.setAttribute("currentSort", currentSort);
-				request.setAttribute("sortParam", sortParam);
-				
-				// so lop hoc tren 1 trang
-				int pageSize = 5;
-
-				// lay trang hien tai
-				int currentPage = request.getParameter("page") == null ? 1
-						: Integer.parseInt(request.getParameter("page"));
-
-				// tinh tong so lop hoc hien co
-				int numberOfClasses = ClassDAO.getAll().size();
-
-				// tinh tong so trang
-				int pageTotal = (numberOfClasses % pageSize == 0) ? (numberOfClasses / pageSize)
-						: ((numberOfClasses / pageSize) + 1);
-
-				// custom thong tin lop hoc de tra ra view
-				List<HashMap<String, String>> classList = ClassDAO.getClassListByPage(currentPage, pageSize, orderBy);
-				int count = classList.size();
-				for (int i = 0; i < count; i++) {
-					classList.get(i).put("numberOfStudents",
-							String.valueOf(ClassDAO.getNumberOfStudents(classList.get(i).get("classID"))));
-				}
-
-				request.setAttribute("currentPage", currentPage);
 				request.setAttribute("pageTotal", pageTotal);
-				request.setAttribute("classList", classList);
-				request.setAttribute("numberOfClasses", numberOfClasses);
 			} catch (ClassNotFoundException | SQLException e) {
 				System.out.println("Lỗi không lấy được dữ liệu!");
 			}
@@ -136,20 +134,6 @@ public class ClassController extends HttpServlet {
 
 			request.setAttribute("viewTitle", "Thông tin lớp học");
 			request.setAttribute("viewContent", "/WEB-INF/views/class/class-details.jsp");
-			break;
-
-		case "/find-classes":
-			try {
-				String keyword = request.getParameter("keyword");
-
-				request.setAttribute("classListByName", ClassDAO.getClassListByName(keyword));
-				request.setAttribute("numberOfThreadsFound", ClassDAO.getClassListByName(keyword).size());
-			} catch (ClassNotFoundException | SQLException e) {
-				System.out.println("Lỗi không tìm thấy dữ liệu: " + e.getMessage());
-			}
-			request.setAttribute("viewTitle", "Danh sách lớp học");
-			request.setAttribute("viewContent", "/WEB-INF/views/class/class-list.jsp");
-
 			break;
 		}
 
@@ -238,4 +222,45 @@ public class ClassController extends HttpServlet {
 		}
 	}
 
+	private void sortByStudentName(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		try {
+			// lay tieu chi sap xep
+			String getSortParam = request.getParameter("sort-param");
+
+			// mac dinh load danh sach tang dan theo ten (A-Z)
+			orderBy = "name-asc";
+
+			// du lieu mac dinh cho sort-param o url
+			String sortParam = "name-desc";
+
+			// du lieu cho phan trang
+			String currentSort = getSortParam;
+
+			if (currentSort == null) {
+				currentSort = "name-asc";
+			} else {
+				if (getSortParam.equalsIgnoreCase("name-asc")) {
+					orderBy = "name-asc";
+				} else {
+					orderBy = "name-desc";
+				}
+
+				sortParam = getSortParam.equalsIgnoreCase("name-asc") ? "name-desc" : "name-asc";
+			}
+
+			request.setAttribute("currentSort", currentSort);
+			request.setAttribute("sortParam", sortParam);
+
+			// so luong lop hoc tren 1 trang
+			pageSize = 5;
+
+			// lay trang hien tai
+			currentPage = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
+
+			request.setAttribute("currentPage", currentPage);
+		} catch (Exception e) {
+			System.out.println("Lỗi không lấy được dữ liệu!");
+		}
+	}
 }

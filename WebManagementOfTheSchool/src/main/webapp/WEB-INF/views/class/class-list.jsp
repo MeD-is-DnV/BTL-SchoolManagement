@@ -15,7 +15,7 @@
 		</div>
 		<div class="col-12 col-sm-12 col-md-4 col-lg-4"></div>
 		<div class="col-12 col-sm-12 col-md-4 col-lg-4">
-			<form class="form-inline" action="find-classes" method="get">
+			<form class="form-inline" action="class-list" method="get">
 				<div class="form-group mx-sm-3 mb-2">
 					<input type="text" class="form-control" id="keyword" name="keyword"
 						placeholder="Nhập tên lớp...">
@@ -28,7 +28,14 @@
 		<table class="table text-center">
 			<thead class="thead-light">
 				<tr>
-					<th scope="col" class="align-middle"><a href="class-list?sort-param=${sortParam}&page=${currentPage}">Tên</a></th>
+					<c:if test="${numberOfClasses >= 0}">
+						<th scope="col"><a
+							href="class-list?sort-param=${sortParam}&page=${currentPage}">Tên</a></th>
+					</c:if>
+					<c:if test="${numberOfThreadsFound >= 0}">
+						<th scope="col"><a
+							href="class-list?keyword=${keyword}&sort-param=${sortParam}&page=${currentPage}">Tên</a></th>
+					</c:if>
 					<th scope="col" class="align-middle">Số lượng sinh viên <br>
 					<small>(Đang theo học)</small></th>
 					<th scope="col" class="align-middle">Trạng thái</th>
@@ -65,9 +72,10 @@
 					</tr>>
 				</c:if>
 				<c:if test="${numberOfThreadsFound > 0}">
-					<c:forEach var="Class" items="${requestScope.classListByName}">
+					<c:forEach var="Class" items="${requestScope.classListByNameAndPage}">
 						<tr>
 							<td>${Class.className}</td>
+							<td>${Class.numberOfStudents }</td>
 							<td><c:if test="${Class.status == 'Đang hoạt động' }">
 									<button
 										class="btn btn-sm btn-outline-success font-weight-bolder"
@@ -81,7 +89,7 @@
 								class="btn btn-sm btn-warning">Sửa</a> <a
 								href="class-details?class-id=${Class.classID }"
 								class="btn btn-sm btn-primary">Chi tiết</a> <a
-								href="student-list?class-id=${Data.classID }"
+								href="student-list?class-id=${Class.classID }"
 								class="btn btn-sm btn-success">Danh sách sinh viên</a></td>
 						</tr>
 					</c:forEach>

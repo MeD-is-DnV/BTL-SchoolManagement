@@ -66,7 +66,7 @@ public class SubjectController extends HttpServlet {
 							: ((numberOfSubjects / pageSize) + 1);
 
 					request.setAttribute("listOfSubjects",
-							SubjectDAO.getSubjectListByPage(currentPage, pageSize, orderBy));
+							SubjectDAO.getSubjectByName(currentPage, pageSize, orderBy, null));
 					request.setAttribute("countOfSubject", numberOfSubjects);
 				} else {
 					// toan bo danh sach mon hoc tim duoc

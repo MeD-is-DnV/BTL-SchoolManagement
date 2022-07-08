@@ -40,8 +40,10 @@ public class StudentController extends HttpServlet {
 
 				// sap xep theo ten sinh vien
 				sortByStudentName(request, response);
+				
+				searchByType = "find-all-students";
 
-				if (keyword == null) {
+				if (keyword == null) {					
 					// lay tong so luong sinh vien cua tat ca cac lop
 					numberOfStudents = StudentDAO.getAll().size();
 
@@ -51,9 +53,9 @@ public class StudentController extends HttpServlet {
 
 					request.setAttribute("numberOfStudents", numberOfStudents);
 					request.setAttribute("allStudents",
-							StudentDAO.getStudentListByPage(currentPage, pageSize, null, orderBy));
+							StudentDAO.getStudentsByNameAndClass(currentPage, pageSize, orderBy, null, null, searchByType));
 				} else {
-					searchByType = "find-all-students";
+					//searchByType = "find-all-students";
 
 					// lay toan bo danh sach sinh vien tim duoc theo ten
 					List<HashMap<String, String>> allStudentsByName = StudentDAO.getStudentsByNameAndClass(0, 0, null,
@@ -91,7 +93,9 @@ public class StudentController extends HttpServlet {
 
 				// sap xep theo ten sinh vien
 				sortByStudentName(request, response);
-
+				
+				searchByType = "student-list-by-class";
+	
 				if (keyword == null) {
 					// lay tong so luong sinh vien cua lop
 					numberOfStudents = StudentDAO.getStudentListByClassID(classID).size();
@@ -103,9 +107,9 @@ public class StudentController extends HttpServlet {
 					request.setAttribute("numberOfStudents", numberOfStudents);
 					request.setAttribute("numberOfActiveStudents", ClassDAO.getNumberOfStudents(classID));
 					request.setAttribute("studentListByClassID",
-							StudentDAO.getStudentListByPage(currentPage, pageSize, classID, orderBy));
+							StudentDAO.getStudentsByNameAndClass(currentPage, pageSize, orderBy, null, classID, searchByType));
 				} else {
-					searchByType = "student-list-by-class";
+					//searchByType = "student-list-by-class";
 
 					// lay toan bo danh sach sinh vien tim duoc theo ten va ma lop
 					List<HashMap<String, String>> studentListByName = StudentDAO.getStudentsByNameAndClass(0, 0, null,
