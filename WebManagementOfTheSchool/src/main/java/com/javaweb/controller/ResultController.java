@@ -146,11 +146,14 @@ public class ResultController extends HttpServlet {
 			for (int i = 0; i < count - 1; i++) {
 				HashMap<String, String> temp = new HashMap<>();
 
+				temp.put("studentID", resultDetails.get(i).get("studentID"));
 				temp.put("studentName", resultDetails.get(i).get("studentName"));
 				temp.put("cardID", resultDetails.get(i).get("cardID"));
 				temp.put("dob", resultDetails.get(i).get("dob"));
 				temp.put(resultDetails.get(i).get("subjectName"), resultDetails.get(i).get("point"));
 				temp.put(resultDetails.get(i).get("startDay"), resultDetails.get(i).get("startDay"));
+				temp.put("startDayForURL", resultDetails.get(i).get("startDayForURL"));
+				temp.put("endDateForURL", resultDetails.get(i).get("endDateForURL"));
 
 				for (int j = i + 1; j < count; j++) {
 					if (resultDetails.get(i).get("cardID").equalsIgnoreCase(resultDetails.get(j).get("cardID"))

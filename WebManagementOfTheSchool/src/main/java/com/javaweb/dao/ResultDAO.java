@@ -256,7 +256,7 @@ public class ResultDAO {
 	public static List<HashMap<String, String>> getPoint() throws SQLException, ClassNotFoundException {
 		List<HashMap<String, String>> list = new ArrayList<>();
 
-		String sql = "SELECT s.name AS student_name, s.card_id, s.dob, sub.name AS subject_name, r.point, r.start_day, r.end_date"
+		String sql = "SELECT s.student_id, s.name AS student_name, s.card_id, s.dob, sub.name AS subject_name, r.point, r.start_day, r.end_date"
 				+ " FROM `result` r JOIN `student` s ON r.student_id = s.student_id JOIN `subject` sub on r.subject_id = sub.subject_id"
 				+ " WHERE r.subject_not_active = 0";
 
@@ -267,6 +267,7 @@ public class ResultDAO {
 		while (rs.next()) {
 			HashMap<String, String> getRow = new HashMap<>();
 
+			getRow.put("studentID", rs.getNString("student_id"));
 			getRow.put("studentName", rs.getNString("student_name"));
 			getRow.put("cardID", rs.getNString("card_id"));
 
@@ -284,6 +285,9 @@ public class ResultDAO {
 			date = LocalDate.parse(rs.getDate("end_date").toString());
 			String endDate = date.format(formatDate);
 			getRow.put("endDate", endDate);
+			
+			getRow.put("startDayForURL", rs.getDate("start_day").toString());
+			getRow.put("endDateForURL", rs.getDate("end_date").toString());
 
 			list.add(getRow);
 		}

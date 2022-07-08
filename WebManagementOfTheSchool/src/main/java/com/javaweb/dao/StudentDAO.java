@@ -216,6 +216,23 @@ public class StudentDAO {
 		// Thực thi câu SQL INSERT
 		DB.exec(sql, params);
 	}
+	
+	// kiem tra xem sinh vien co du lieu trong danh sach ket qua thi hay khong (theo student_id)?
+	private static String haveData(String studentID) throws SQLException, ClassNotFoundException {
+		String sql = "SELECT * FROM result WHERE `student_id` = '" + studentID + "'";
+		
+		DB.open();
+
+		ResultSet rs = DB.q(sql);
+		
+		while(rs.next()) {
+			return "have data";
+		}
+		
+		DB.close();
+		
+		return "no data";
+	}
 
 	// lay thong tin chi tiet cua sinh vien theo student_id
 	public static HashMap<String, String> getDetails(String studentID) throws SQLException, ClassNotFoundException {
@@ -330,6 +347,7 @@ public class StudentDAO {
 			getRow.put("phoneNumber", rs.getNString("phone_number"));
 			getRow.put("classID", rs.getNString("class_id"));
 			getRow.put("status", String.valueOf(rs.getInt("status")));
+			getRow.put("haveResult", haveData(rs.getNString("student_id")));
 
 			list.add(getRow);
 		}

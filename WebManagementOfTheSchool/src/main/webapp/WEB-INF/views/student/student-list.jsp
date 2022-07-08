@@ -73,7 +73,7 @@
 								class="btn btn-sm btn-warning">Sửa</a> <a
 								href="student-details?student-id=${Data.studentID }"
 								class="btn btn-sm btn-primary">Chi tiết</a> <c:if
-									test="${Data.status != 0}">
+									test="${Data.status != 0 && Data.haveResult == 'have data'}">
 									<a href="redirect-edit-result?student-id=${Data.studentID }"
 										class="btn btn-sm btn-success">Sửa kết quả thi</a>
 								</c:if></td>
@@ -105,7 +105,7 @@
 								class="btn btn-sm btn-warning">Sửa</a> <a
 								href="student-details?student-id=${Data.studentID }"
 								class="btn btn-sm btn-primary">Chi tiết</a> <c:if
-									test="${Data.status != 0}">
+									test="${Data.status != 0 && Data.haveResult == 'have data'}">
 									<a href="redirect-edit-result?student-id=${Data.studentID }"
 										class="btn btn-sm btn-success">Sửa kết quả thi</a>
 								</c:if></td>
