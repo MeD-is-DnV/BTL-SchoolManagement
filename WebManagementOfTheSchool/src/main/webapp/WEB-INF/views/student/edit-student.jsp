@@ -22,7 +22,7 @@
 				<label for="dob" class="font-weight-bolder">Ngày sinh <span
 					class="text-danger"> (*)</span>
 				</label> <input type="date" class="form-control" id="dob" name="dob"
-					value="${studentInfo.dob}">
+					value="${studentInfo.dobForEdit}">
 			</div>
 		</div>
 		<div class="form-row mb-3">

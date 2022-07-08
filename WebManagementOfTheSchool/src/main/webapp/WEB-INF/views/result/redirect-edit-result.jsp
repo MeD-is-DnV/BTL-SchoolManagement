@@ -9,7 +9,7 @@
 		<c:forEach var="Time" items="${requestScope.getTime}">
 			<div class="col-12 col-sm-12 col-md-6 col-lg-6">
 				<a class="btn btn-info w-100"
-					href="edit-result?student-id=${studentID}&start-day=${Time.startDay}&end-date=${Time.endDate}"><strong>Từ</strong>
+					href="edit-result?student-id=${studentID}&start-day=${Time.startDayForURL}&end-date=${Time.endDateForURL}"><strong>Từ</strong>
 					${Time.startDay} <strong>đến</strong> ${Time.endDate}</a>
 			</div>
 		</c:forEach>

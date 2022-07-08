@@ -2,12 +2,12 @@ package com.javaweb.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import org.apache.tomcat.util.file.Matcher;
 
 public class StudentDAO {
 	private static Pattern regex;
@@ -221,6 +221,8 @@ public class StudentDAO {
 	public static HashMap<String, String> getDetails(String studentID) throws SQLException, ClassNotFoundException {
 		String sql = "SELECT * FROM student WHERE `student_id` = '" + studentID + "'";
 
+		DateTimeFormatter formatDate = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
 		DB.open();
 
 		ResultSet rs = DB.q(sql);
@@ -230,7 +232,12 @@ public class StudentDAO {
 		while (rs.next()) {
 			getRow.put("studentID", rs.getNString("student_id"));
 			getRow.put("studentName", rs.getNString("name"));
-			getRow.put("dob", rs.getDate("dob").toString());
+
+			LocalDate date = LocalDate.parse(rs.getDate("dob").toString());
+			String dob = date.format(formatDate);
+			getRow.put("dob", dob);
+			getRow.put("dobForEdit", rs.getDate("dob").toString());
+			
 			getRow.put("cardID", rs.getNString("card_id"));
 			getRow.put("gender", String.valueOf(rs.getInt("gender")));
 			getRow.put("email", rs.getNString("email"));

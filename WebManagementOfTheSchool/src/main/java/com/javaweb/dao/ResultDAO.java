@@ -2,6 +2,8 @@ package com.javaweb.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,8 @@ import java.util.regex.Pattern;
 
 public class ResultDAO {
 	private static int i;
+	private static DateTimeFormatter formatDate = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	private static LocalDate date;
 
 	// kiem tra du lieu co day du hay khong?
 	public static boolean isNullError(String startDay, String endDate, HashMap<String, String> points) {
@@ -93,8 +97,16 @@ public class ResultDAO {
 		while (rs.next()) {
 			HashMap<String, String> getRow = new HashMap<>();
 
-			getRow.put("startDay", rs.getDate("start_day").toString());
-			getRow.put("endDate", rs.getDate("end_date").toString());
+			date = LocalDate.parse(rs.getDate("start_day").toString());
+			String startDay = date.format(formatDate);
+			getRow.put("startDay", startDay);
+
+			date = LocalDate.parse(rs.getDate("end_date").toString());
+			String endDate = date.format(formatDate);
+			getRow.put("endDate", endDate);
+			
+			getRow.put("startDayForURL", rs.getDate("start_day").toString());
+			getRow.put("endDateForURL", rs.getDate("end_date").toString());
 
 			list.add(getRow);
 		}
@@ -224,8 +236,13 @@ public class ResultDAO {
 		while (rs.next()) {
 			HashMap<String, String> getRow = new HashMap<String, String>();
 
-			getRow.put("startDay", rs.getDate("start_day").toString());
-			getRow.put("endDate", rs.getDate("end_date").toString());
+			date = LocalDate.parse(rs.getDate("start_day").toString());
+			String startDay = date.format(formatDate);
+			getRow.put("startDay", startDay);
+
+			date = LocalDate.parse(rs.getDate("end_date").toString());
+			String endDate = date.format(formatDate);
+			getRow.put("endDate", endDate);
 
 			timeList.add(getRow);
 		}
@@ -252,11 +269,21 @@ public class ResultDAO {
 
 			getRow.put("studentName", rs.getNString("student_name"));
 			getRow.put("cardID", rs.getNString("card_id"));
-			getRow.put("dob", rs.getDate("dob").toString());
+
+			date = LocalDate.parse(rs.getDate("dob").toString());
+			String dob = date.format(formatDate);
+			getRow.put("dob", dob);
+
 			getRow.put("subjectName", rs.getNString("subject_name"));
 			getRow.put("point", String.valueOf(rs.getFloat("point")));
-			getRow.put("startDay", rs.getDate("start_day").toString());
-			getRow.put("endDate", rs.getDate("end_date").toString());
+			
+			date = LocalDate.parse(rs.getDate("start_day").toString());
+			String startDay = date.format(formatDate);
+			getRow.put("startDay", startDay);
+
+			date = LocalDate.parse(rs.getDate("end_date").toString());
+			String endDate = date.format(formatDate);
+			getRow.put("endDate", endDate);
 
 			list.add(getRow);
 		}
