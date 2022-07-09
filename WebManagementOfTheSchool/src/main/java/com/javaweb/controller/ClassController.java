@@ -2,7 +2,6 @@ package com.javaweb.controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpSession;
 
 import com.javaweb.dao.ClassDAO;
 import com.javaweb.dao.Common;
-import com.javaweb.dao.SubjectDAO;
 
 @WebServlet(name = "ClassController", urlPatterns = { "/class-list", "/new-class", "/create-new-class", "/edit-class",
 		"/update-class", "/class-details" })
@@ -23,7 +21,7 @@ public class ClassController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static String action, getClassID, orderBy, getClassName, getStatus;
 	private static String listOfSubjectsID[];
-	private static int pageSize, currentPage, pageTotal, count;
+	private static int pageSize, currentPage, pageTotal;
 
 	public ClassController() {
 		super();
@@ -89,11 +87,6 @@ public class ClassController extends HttpServlet {
 				// custom thong tin lop hoc de tra ra view
 				List<HashMap<String, String>> classList = ClassDAO.getClassListByNameAndPage(currentPage, pageSize,
 						orderBy, null);
-//				count = classList.size();
-//				for (int i = 0; i < count; i++) {
-//					classList.get(i).put("numberOfStudents",
-//							String.valueOf(ClassDAO.getNumberOfStudents(classList.get(i).get("classID"))));
-//				}
 
 				request.setAttribute("classList", classList);
 				request.setAttribute("numberOfClasses", numberOfClasses);
@@ -107,12 +100,6 @@ public class ClassController extends HttpServlet {
 				// danh sach lop hoc theo ten cua tung phan trang
 				List<HashMap<String, String>> classListByNameAndPage = ClassDAO.getClassListByNameAndPage(currentPage,
 						pageSize, orderBy, keyword);
-
-//				count = classListByNameAndPage.size();
-//				for (int i = 0; i < count; i++) {
-//					classListByNameAndPage.get(i).put("numberOfStudents",
-//							String.valueOf(ClassDAO.getNumberOfStudents(classListByNameAndPage.get(i).get("classID"))));
-//				}
 
 				pageTotal = (numberOfThreadsFound % pageSize == 0) ? (numberOfThreadsFound / pageSize)
 						: ((numberOfThreadsFound / pageSize) + 1);
