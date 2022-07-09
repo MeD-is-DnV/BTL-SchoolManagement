@@ -36,8 +36,6 @@
 						<th scope="col"><a
 							href="class-list?keyword=${keyword}&sort-param=${sortParam}&page=${currentPage}">Tên</a></th>
 					</c:if>
-					<th scope="col" class="align-middle">Số lượng sinh viên <br>
-					<small>(Đang theo học)</small></th>
 					<th scope="col" class="align-middle">Trạng thái</th>
 					<th scope="col" class="align-middle">Thao tác</th>
 				</tr>
@@ -47,7 +45,6 @@
 					<c:forEach var="Data" items="${requestScope.classList}">
 						<tr>
 							<td>${Data.className}</td>
-							<td>${Data.numberOfStudents }</td>
 							<td><c:if test="${Data.status == 'Đang hoạt động' }">
 									<button
 										class="btn btn-sm btn-outline-success font-weight-bolder"

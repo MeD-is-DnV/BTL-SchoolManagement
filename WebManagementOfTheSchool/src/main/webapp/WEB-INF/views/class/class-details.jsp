@@ -10,8 +10,19 @@
 				class="form-control mb-3 bg-white" id="className" name="className"
 				value="${classInfo.className}" disabled>
 		</div>
+		<div class="form-row mb-3">
+			<div class="col-12 col-sm-12 col-md-6 col-lg-6">
+				<label class="font-weight-bolder">Số sinh viên đang theo học </label> <input
+					type="text" class="form-control bg-white" disabled
+					value="${classInfo.numberOfActiveStudents}">
+			</div>
+			<div class="col-12 col-sm-12 col-md-6 col-lg-6">
+				<label class="font-weight-bolder">Số sinh viên đã nghỉ học </label> <input type="text"
+					class="form-control bg-white" disabled value="${classInfo.numberOfInactiveStudents}">
+			</div>
+		</div>
 		<div class="form-group">
-			<p class="font-weight-bolder">Danh sách môn học</p>
+			<p class="font-weight-bolder mb-2">Danh sách môn học</p>
 			<div class="row px-3">
 				<c:forEach var="SubjectInfo"
 					items="${requestScope.listOfSelectedSubjects}">

@@ -89,11 +89,11 @@ public class ClassController extends HttpServlet {
 				// custom thong tin lop hoc de tra ra view
 				List<HashMap<String, String>> classList = ClassDAO.getClassListByNameAndPage(currentPage, pageSize,
 						orderBy, null);
-				count = classList.size();
-				for (int i = 0; i < count; i++) {
-					classList.get(i).put("numberOfStudents",
-							String.valueOf(ClassDAO.getNumberOfStudents(classList.get(i).get("classID"))));
-				}
+//				count = classList.size();
+//				for (int i = 0; i < count; i++) {
+//					classList.get(i).put("numberOfStudents",
+//							String.valueOf(ClassDAO.getNumberOfStudents(classList.get(i).get("classID"))));
+//				}
 
 				request.setAttribute("classList", classList);
 				request.setAttribute("numberOfClasses", numberOfClasses);
@@ -108,11 +108,11 @@ public class ClassController extends HttpServlet {
 				List<HashMap<String, String>> classListByNameAndPage = ClassDAO.getClassListByNameAndPage(currentPage,
 						pageSize, orderBy, keyword);
 
-				count = classListByNameAndPage.size();
-				for (int i = 0; i < count; i++) {
-					classListByNameAndPage.get(i).put("numberOfStudents",
-							String.valueOf(ClassDAO.getNumberOfStudents(classListByNameAndPage.get(i).get("classID"))));
-				}
+//				count = classListByNameAndPage.size();
+//				for (int i = 0; i < count; i++) {
+//					classListByNameAndPage.get(i).put("numberOfStudents",
+//							String.valueOf(ClassDAO.getNumberOfStudents(classListByNameAndPage.get(i).get("classID"))));
+//				}
 
 				pageTotal = (numberOfThreadsFound % pageSize == 0) ? (numberOfThreadsFound / pageSize)
 						: ((numberOfThreadsFound / pageSize) + 1);
@@ -169,7 +169,12 @@ public class ClassController extends HttpServlet {
 		getClassID = request.getParameter("class-id");
 
 		try {
-			request.setAttribute("classInfo", ClassDAO.getDetails(getClassID));
+			HashMap<String, String> classInfo = ClassDAO.getDetails(getClassID);
+			
+			classInfo.put("numberOfActiveStudents", String.valueOf(ClassDAO.getNumberOfStudents(getClassID, 1)));
+			classInfo.put("numberOfInactiveStudents", String.valueOf(ClassDAO.getNumberOfStudents(getClassID, 0)));
+			
+			request.setAttribute("classInfo", classInfo);
 			request.setAttribute("listOfSelectedSubjects", ClassDAO.getSubjectsListOfClass(getClassID));
 		} catch (ClassNotFoundException | SQLException e) {
 			System.out.println("Lỗi không lấy được dữ liệu!");

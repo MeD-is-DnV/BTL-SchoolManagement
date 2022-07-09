@@ -142,10 +142,10 @@ public class ClassDAO {
 		}
 	}
 
-	// lay so luong sinh vien dang theo hoc theo class_id
-	public static int getNumberOfStudents(String classID) throws SQLException, ClassNotFoundException {
+	// lay so luong sinh vien theo class_id va status (dang theo hoc hoac da nghi hoc)
+	public static int getNumberOfStudents(String classID, int status) throws SQLException, ClassNotFoundException {
 		String sql = "SELECT * FROM `class` LEFT JOIN `student` on class.class_id = student.class_id WHERE class.class_id = '"
-				+ classID + "' AND student.status = 1";
+				+ classID + "' AND student.status = " + status;
 
 		// mở kết nối DB
 		DB.open();

@@ -205,7 +205,7 @@ public class StudentController extends HttpServlet {
 						: ((numberOfStudents / pageSize) + 1);
 
 				request.setAttribute("numberOfStudents", numberOfStudents);
-				request.setAttribute("numberOfActiveStudents", ClassDAO.getNumberOfStudents(classID));
+				request.setAttribute("numberOfActiveStudents", ClassDAO.getNumberOfStudents(classID, 1));
 				request.setAttribute("studentListByClassID", StudentDAO.getStudentsByNameAndClass(currentPage, pageSize,
 						orderBy, null, classID, searchByType));
 			} else {
