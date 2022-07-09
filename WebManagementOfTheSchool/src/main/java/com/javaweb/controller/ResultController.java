@@ -225,9 +225,10 @@ public class ResultController extends HttpServlet {
 
 			HttpSession session = request.getSession();
 
-			if (ResultDAO.isNullError(startDay, endDate, pointBySubject)
+			if (ResultDAO.isError(startDay, endDate, pointBySubject)
 					|| !ResultDAO.correctPointFormat(pointBySubject)) {
-				session.setAttribute("ERROR_MSG", "Vui lòng nhập đầy đủ thông tin và đúng định dạng điểm các môn!");
+				session.setAttribute("ERROR_MSG",
+						"Thông tin chưa đầy đủ hoặc điểm sai định dạng hoặc thời gian thi không hợp lý. Vui lòng kiểm tra lại!");
 
 				request.setAttribute("classID", classID);
 				request.setAttribute("studentListByClassID", ResultDAO.getStudentListByClassID(classID));
@@ -291,7 +292,7 @@ public class ResultController extends HttpServlet {
 
 			HttpSession session = request.getSession();
 
-			if (ResultDAO.isNullError(startDay, endDate, pointBySubject)
+			if (ResultDAO.isError(startDay, endDate, pointBySubject)
 					|| !ResultDAO.correctPointFormat(pointBySubject)) {
 				session.setAttribute("ERROR_MSG", "Vui lòng nhập đầy đủ thông tin và đúng định dạng điểm các môn!");
 

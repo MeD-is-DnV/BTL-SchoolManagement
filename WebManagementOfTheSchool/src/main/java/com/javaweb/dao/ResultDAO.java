@@ -16,9 +16,17 @@ public class ResultDAO {
 	private static LocalDate date;
 
 	// kiem tra du lieu co day du hay khong?
-	public static boolean isNullError(String startDay, String endDate, HashMap<String, String> points) {
+	public static boolean isError(String startDay, String endDate, HashMap<String, String> points) {
 		if (startDay.length() == 0 || endDate.length() == 0) {
 			return true;
+		} else if (startDay != null && endDate != null) {
+			// kiem tra ngay ket thuc thi co o trong qua khu hay khong?
+			LocalDate startDayConvert = LocalDate.parse(startDay, DateTimeFormatter.ISO_DATE);
+			LocalDate endDateConvert = LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE);
+			
+			if (endDateConvert.isBefore(startDayConvert)) {
+				return true;
+			}
 		}
 
 		for (String key : points.keySet()) {
