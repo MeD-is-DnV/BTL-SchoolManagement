@@ -72,7 +72,6 @@
 					<c:forEach var="Class" items="${requestScope.classListByNameAndPage}">
 						<tr>
 							<td>${Class.className}</td>
-							<td>${Class.numberOfStudents }</td>
 							<td><c:if test="${Class.status == 'Đang hoạt động' }">
 									<button
 										class="btn btn-sm btn-outline-success font-weight-bolder"

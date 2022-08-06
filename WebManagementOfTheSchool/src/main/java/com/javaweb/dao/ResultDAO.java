@@ -261,12 +261,12 @@ public class ResultDAO {
 	}
 
 	// lay diem so
-	public static List<HashMap<String, String>> getPoint() throws SQLException, ClassNotFoundException {
+	public static List<HashMap<String, String>> getPoint(String classID) throws SQLException, ClassNotFoundException {
 		List<HashMap<String, String>> list = new ArrayList<>();
 
 		String sql = "SELECT s.student_id, s.name AS student_name, s.card_id, s.dob, sub.name AS subject_name, r.point, r.start_day, r.end_date"
 				+ " FROM `result` r JOIN `student` s ON r.student_id = s.student_id JOIN `subject` sub on r.subject_id = sub.subject_id"
-				+ " WHERE r.subject_not_active = 0";
+				+ " WHERE r.subject_not_active = 0 AND s.class_id = '" + classID + "'";
 
 		DB.open();
 

@@ -140,7 +140,7 @@ public class ResultController extends HttpServlet {
 			int numberOfExams = resultTimeList.size();
 
 			// custom du lieu tra ra view
-			List<HashMap<String, String>> resultDetails = ResultDAO.getPoint();
+			List<HashMap<String, String>> resultDetails = ResultDAO.getPoint(classID);
 			List<HashMap<String, String>> customInfo = new ArrayList<>();
 			int count = resultDetails.size();
 			for (int i = 0; i < count - 1; i++) {
